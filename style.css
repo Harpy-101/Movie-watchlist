@@ -69,6 +69,7 @@ button {
   display: flex;
   color: white;
   padding: 0 2em;
+  margin: 2em 0;
 }
 
 .plot {
@@ -108,9 +109,44 @@ button {
 }
 
 .movie img {
-  width: 15em;
+  width: 10em;
 }
 
 .header h1 {
   font-size: 3.5rem;
+}
+
+.movie h2 {
+  margin-bottom: 0;
+}
+
+.plot-text {
+  color: #A5A5A5;
+}
+
+.rating-text {
+  display: inline-flex;
+  justify-content: start;
+  font-size: 1rem;
+}
+
+span i {
+  padding: 0 4px 0 8px;
+}
+
+.empty-watchlist-sub-text {
+  color: white;
+}
+
+.empty-watchlist-sub-text i {
+  padding-right: 8px;
+}
+
+.light-gray {
+  color: #787878;
+}
+
+hr {
+  color: white;
+  margin: 0 2em;
 }

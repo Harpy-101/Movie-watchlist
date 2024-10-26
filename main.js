@@ -5,10 +5,11 @@ const omdbApiKey = import.meta.env.VITE_OMDB_API_KEY
 const myWatchlist = document.getElementById("my-watchlist"); // Update if using another selector
 const mainEl = document.getElementById("main"); 
 const currPage = document.getElementById(`curr-page`)
+const searchBar = document.getElementById(`search-bar`)
 
 let searchResults = [];
-mainEl.innerHTML = "<div>Test Content</div>";
-
+//mainEl.innerHTML = "<div>Test Content</div>";
+localStorage.clear()
 searchBtn.addEventListener(`click`, async () => {
     const response = await fetch(`http://www.omdbapi.com/?apikey=${omdbApiKey}&s=${userInput.value}&plot`)
     const data = await response.json()
@@ -18,7 +19,7 @@ searchBtn.addEventListener(`click`, async () => {
     for (let movie of data.Search) {
         const movieInfo = await getPlot(movie.imdbID)
         const watchlist = JSON.parse(localStorage.getItem(`watchlist`)) || []
-        
+        console.log(movieInfo)
         const isInWatclist = isInLocalStorage(watchlist, movie.imdbID)
         console.log(`The title: "${movie.Title}" is is local Storage: "${isInWatclist}"`)
 
@@ -31,7 +32,7 @@ searchBtn.addEventListener(`click`, async () => {
             <div class="movie">
                 <img src="${movie.Poster}">
                 <div class="movie-text">
-                    <h2>${movie.Title}</h2>
+                    <h2>${movie.Title} <span class="rating-text"><i class="fa-solid fa-star" style="color:gold"></i>${movieInfo.imdbRating}</span></h2>
                     <div class="text-flex-container">
                         <p>${movieInfo.Runtime}</p>
                         <p>${movieInfo.Genre}</p>
@@ -65,9 +66,17 @@ myWatchlist.addEventListener(`click`, (e) => {
                 <h3>Strat exploring</h3>
             </div>
         `
+        searchBar.innerHTML = `
+                <div class="input-container">
+                <i class="fa-solid fa-magnifying-glass fa-1xl"></i>
+                <input type="text" id="user-input">
+                </div>
+                <button id="search-btn">Search</button>
+        `
 
         myWatchlist.classList.remove(`in-watchlist`)
         myWatchlist.textContent = `My Watchlist`
+        currPage.textContent = `Find your film`
     }
     else {renderWatchlist()}
 })
@@ -111,31 +120,45 @@ function renderWatchlist() {
     console.log(`here`)
     let watchlist = JSON.parse(localStorage.getItem(`watchlist`)) || []
     
-    let movieArr = ``;
-    watchlist.forEach(movie => {
-        movieArr += `
-            <div class="movie">
-                <img src="${movie.Poster}">
-                <div class="movie-text">
-                    <h3>${movie.Title}</h2>
-                    <div class="text-flex-container">
-                        <p>${movie.Runtime}</p>
-                        <p>${movie.Genre}</p>
-                        <div class="icon-container">
-                            <i class="fa-regular fa-circle-xmark" data-remove="${movie.imdbID}"></i>
-                            <p>Remove</p>
-                        </div>
-                    </div>
-                    <span class="plot-text">${movie.Plot}</span>
+    if (watchlist.length < 1) {
+        mainEl.innerHTML = `
+           <div class="empty-state-text">
+                <h3 class="light-gray">Your watchlist is looking a little empty...</h3>
+                <div class="empty-watchlist-sub-text">
+                    <p><span><i class="fa-solid fa-circle-plus"></i></span>Let’s add some movies!</p>
                 </div>
             </div>
-            <hr>
-        `
-    })
-
+            `
+    }
+    else {
+        let movieArr = ``;
+        watchlist.forEach(movie => {
+            movieArr += `
+                <div class="movie">
+                    <img src="${movie.Poster}">
+                    <div class="movie-text">
+                        <h3>${movie.Title} <span class="rating-text"><i class="fa-solid fa-star" style="color:gold"></i>${movie.imdbRating}</span></h2>
+                        <div class="text-flex-container">
+                            <p>${movie.Runtime}</p>
+                            <p>${movie.Genre}</p>
+                            <div class="icon-container">
+                                <i class="fa-regular fa-circle-xmark" data-remove="${movie.imdbID}"></i>
+                                <p>Remove</p>
+                            </div>
+                        </div>
+                        <span class="plot-text">${movie.Plot}</span>
+                    </div>
+                </div>
+                <hr>
+            `
+        })
+        mainEl.innerHTML = movieArr
+    }
+    searchBar.innerHTML = ``
     myWatchlist.textContent = `Search for movies`
-    mainEl.innerHTML = movieArr
+    //mainEl.innerHTML = movieArr
     myWatchlist.classList.add(`in-watchlist`)
+    currPage.textContent = `My watchlist`
 }
 
 function isInLocalStorage(watchlist, id) {
