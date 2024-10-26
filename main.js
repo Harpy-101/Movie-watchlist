@@ -9,9 +9,9 @@ const searchBar = document.getElementById(`search-bar`)
 
 let searchResults = [];
 //mainEl.innerHTML = "<div>Test Content</div>";
-localStorage.clear()
+//localStorage.clear()
 searchBtn.addEventListener(`click`, async () => {
-    const response = await fetch(`http://www.omdbapi.com/?apikey=${omdbApiKey}&s=${userInput.value}&plot`)
+    const response = await fetch(`https://www.omdbapi.com/?apikey=${omdbApiKey}&s=${userInput.value}&plot`)
     const data = await response.json()
 
     let movieArr =``
@@ -51,7 +51,7 @@ searchBtn.addEventListener(`click`, async () => {
 })
 
 async function getPlot(id) {
-    const call = await fetch(`http://www.omdbapi.com/?apikey=${omdbApiKey}&i=${id}`)
+    const call = await fetch(`https://www.omdbapi.com/?apikey=${omdbApiKey}&i=${id}`)
     const response = call.json()
     return response   
 }
