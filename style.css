@@ -110,3 +110,7 @@ button {
 .movie img {
   width: 15em;
 }
+
+.header h1 {
+  font-size: 3.5rem;
+}
