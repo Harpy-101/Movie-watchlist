@@ -1,27 +1,39 @@
+const omdbApiKey = import.meta.env.VITE_OMDB_API_KEY
 const searchBtn = document.getElementById(`search-btn`)
 const userInput = document.getElementById(`user-input`)
 const headerEl = document.getElementById(`header`)
-const omdbApiKey = import.meta.env.VITE_OMDB_API_KEY
 const myWatchlist = document.getElementById("my-watchlist"); // Update if using another selector
 const mainEl = document.getElementById("main"); 
 const currPage = document.getElementById(`curr-page`)
 const searchBar = document.getElementById(`search-bar`)
 
 let searchResults = [];
-//mainEl.innerHTML = "<div>Test Content</div>";
-//localStorage.clear()
+
 searchBtn.addEventListener(`click`, async () => {
+    if(!userInput.value) {
+        return
+    }
     const response = await fetch(`https://www.omdbapi.com/?apikey=${omdbApiKey}&s=${userInput.value}&plot`)
     const data = await response.json()
 
+    if (data.Response === `False`) {
+        apiErrorHandler(data.Error)
+        return
+    }
+
+    mainEl.innerHTML = `
+        <div id="loading-spinner" class="spinner" style="display: flex;">
+            <div class="spinner-circle"></div>
+        </div>
+    `
     let movieArr =``
             
     for (let movie of data.Search) {
         const movieInfo = await getPlot(movie.imdbID)
         const watchlist = JSON.parse(localStorage.getItem(`watchlist`)) || []
-        console.log(movieInfo)
+        //console.log(movieInfo)
         const isInWatclist = isInLocalStorage(watchlist, movie.imdbID)
-        console.log(`The title: "${movie.Title}" is is local Storage: "${isInWatclist}"`)
+        //console.log(`The title: "${movie.Title}" is is local Storage: "${isInWatclist}"`)
 
         searchResults.push(movieInfo)
         const iconContainerHTML = isInWatclist
@@ -69,7 +81,7 @@ myWatchlist.addEventListener(`click`, (e) => {
         searchBar.innerHTML = `
                 <div class="input-container">
                 <i class="fa-solid fa-magnifying-glass fa-1xl"></i>
-                <input type="text" id="user-input">
+                <input type="text" id="user-input" required>
                 </div>
                 <button id="search-btn">Search</button>
         `
@@ -92,7 +104,7 @@ document.addEventListener(`click`, e => {
     }
 
     if (e.target.closest(`[data-remove]`)) {
-        console.log(e.target.dataset.remove)
+        //console.log(e.target.dataset.remove)
         let watchlist = JSON.parse(localStorage.getItem(`watchlist`)) || []
         watchlist = watchlist.filter(movie => movie.imdbID !== e.target.dataset.remove)
         localStorage.setItem(`watchlist`, JSON.stringify(watchlist))
@@ -106,7 +118,7 @@ function handleWatchlistClick(movie) {
    if (!watchlist.some(item => item.imdbID === movie.imdbID)) {
         watchlist.unshift(movie)
         localStorage.setItem(`watchlist`, JSON.stringify(watchlist))
-        console.log(`Movie with ID ${movie.imdbID} added to the watchlist.`);
+        //console.log(`Movie with ID ${movie.imdbID} added to the watchlist.`);
    }
 }
 
@@ -117,7 +129,7 @@ function updateIcon(iconElement) {
 
     
 function renderWatchlist() {
-    console.log(`here`)
+    //console.log(`here`)
     let watchlist = JSON.parse(localStorage.getItem(`watchlist`)) || []
     
     if (watchlist.length < 1) {
@@ -154,6 +166,7 @@ function renderWatchlist() {
         })
         mainEl.innerHTML = movieArr
     }
+    userInput.value = ``
     searchBar.innerHTML = ``
     myWatchlist.textContent = `Search for movies`
     //mainEl.innerHTML = movieArr
@@ -175,6 +188,15 @@ function loadSearchPage() {
         <div class="empty-state-text">
             <i class="fa-solid fa-film fa-2xl"></i>
             <h3>Start exploring</h3>
+        </div>
+    `
+}
+
+function apiErrorHandler(errMsg) {
+    mainEl.innerHTML = `
+        <div class="empty-state-text">
+          <i class="fa-solid fa-triangle-exclamation fa-2xl" style="color:white"></i>
+          <h3>${errMsg}</h3>
         </div>
     `
 }

@@ -4,16 +4,26 @@ body {
   font-family: "Inter", sans-serif;
 }
 
+/* Layout Structure */
 .header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin: 0 auto;
   padding: 0 3em 0 3em;
-  background-image: url(public/media/image36.png);
+  background-image: url(/media/image36.png);
   color: white;
   min-height: 208px;
 }
+
+.search-bar {
+  position: relative;
+  top: -1.5em;
+  display: flex;
+  justify-content: center;
+}
+
+/* Component Styles */
 
 input {
   background-color: #2E2E2F;
@@ -34,13 +44,6 @@ button {
   border-bottom-right-radius: 4px;
   color: white;
   cursor: pointer;
-}
-
-.search-bar {
-  position: relative;
-  top: -1.5em;
-  display: flex;
-  justify-content: center;
 }
 
 .empty-state-text {
@@ -149,4 +152,27 @@ span i {
 hr {
   color: white;
   margin: 0 2em;
+}
+
+/* Spinner Styles */
+.spinner {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+.spinner-circle {
+    border: 8px solid rgba(255, 255, 255, 0.2);
+    border-top: 8px solid #ffffff;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    animation: spin 1s linear infinite;
+}
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
 }
